@@ -25,7 +25,7 @@ import { TrackDetailComponent } from './track-detail.component';
 				(click)="onSelect(item)"
   			[class.selected]="item === selectedItem"
 				>
-				{{item.id}}
+				{{unixTimeToString(item.id)}}
 			</li>
 		</ul>
 		<track-detail [item]="selectedItem" ></track-detail>
@@ -51,38 +51,31 @@ export class TracksComponent {
   constructor(db: AngularFireDatabase) {
 	  this.Archive = db.list('/Archive');
 
-	  this.Archive
-		.subscribe(snapshots => {
-   	 snapshots.forEach(snapshot => {
-      console.log(snapshot.key)
-      console.log('snapshot',snapshot)
-			this.makeTracksArray(snapshots)
-    });
-
-		//this.makeTracksArray(this.Archive)
-  })
-
-/*
-	  promise
-	  .then(data => console.log('success', data))
-*/
-
-			//this.makeTracksArray(this.Archive)
-		
+	  this.Archive.subscribe(snapshots => {
+	   	 snapshots.forEach(snapshot => {
+				this.makeTracksArray(snapshots)
+	    });
+	  })
   }
   onSelect(item: Item): void {
   	this.selectedItem = item;
   	console.log(this.selectedItem)
 	};
-	makeTracksArray(archive) {
-		console.log('archive',archive)
-		var archivedTracksArr = [];
+	makeTracksArray(archive): void {
+		let archivedTracksArr = [];
     for( var i in archive ) {
     	archivedTracksArr.push(archive[i])
 		}
-		console.log('archivedTracksArr',archivedTracksArr)
 		this.archivedTracksArr = archivedTracksArr.sort()
 	}
+	public unixTimeToString(unixTime) {
+		var dateObj = new Date(unixTime);
+		var year = dateObj.getUTCFullYear();
+		var month = dateObj.getUTCMonth() + 1;
+		var day = dateObj.getUTCDate();
+		return day + '-' + month + '-' + year;
+	}
+
 	
 }
 
