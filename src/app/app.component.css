@@ -1,0 +1,58 @@
+@import "https://cdnjs.cloudflare.com/ajax/libs/foundation/6.3.0/css/foundation.min.css";
+
+
+@font-face {
+    font-family: 'OrkneyRegular';
+    src: url('../assets/fonts/OrkneyRegular.eot');
+    src: url('../assets/fonts/OrkneyRegular.eot') format('embedded-opentype'),
+         url('../assets/fonts/OrkneyRegular.woff2') format('woff2'),
+         url('../assets/fonts/OrkneyRegular.woff') format('woff'),
+         url('../assets/fonts/OrkneyRegular.ttf') format('truetype'),
+         url('../assets/fonts/OrkneyRegular.svg#OrkneyRegular') format('svg');
+}
+
+
+
+html, body, h1, h2, h2, h4, p {
+	font-family: 'OrkneyRegular';
+}
+body {
+	background: #888888;
+}
+
+header {
+	background: #626262;
+	height: 110px;
+	overflow: hidden;
+	margin-bottom: 20px;
+	box-shadow: 0 0 10px rgba(50,50,50,0.4)
+}
+
+header img {
+	margin-top: 10px;
+	float:left;
+}
+
+header h1 {
+	display: inline;
+	color: #888888;
+	font-size: 100px;
+	text-shadow: 10px 10px 20px #444;
+}
+
+.display--block {
+	display: block;
+}
+
+.display--inline-block {
+	display: inline-block;
+}
+
+section {
+	margin-bottom: 20px;
+}
+
+.button {
+	margin: 5px;
+	width: 200px;
+}

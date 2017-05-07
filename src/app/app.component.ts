@@ -11,7 +11,7 @@ import { TracksComponent } from './tracks.component';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'Mappo Web';
+  title = 'Mappo';
 }
 
 

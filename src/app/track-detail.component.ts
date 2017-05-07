@@ -1,8 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AngularFireDatabase, FirebaseListObservable } from 'angularfire2/database';
-
-//import * as L from 'mapbox.js';
-
 import { AgmCoreModule } from '@agm/core';
 
 import { Item } from './item';
@@ -13,55 +10,55 @@ import { Item } from './item';
 @Component({
   selector: 'track-detail',
   template: `
-  	<div *ngIf="item">
+  	<section *ngIf="item" class="track-detail">
 
   		<h2>Track Detail</h2>
   		<div class="card">
   			<div id="info" class="card-section">
-  			  date: {{unixTimeToString(item.id)}}
-					pointsCount: {{ pointsCount }}
+  			  date: {{unixTimeToString(item.id)}};
+					pointsCount: {{ pointsCount }};
 					trackDistance: {{getTrackDistance()}}m
   			</div>
   		</div>
-
 
 			<agm-map 
 				[latitude]="lat" 
 				[longitude]="lon"
 				[zoom]="zoom"
+				[styles]="mapStyles"
 				style="height:500px">
-				 <agm-polyline >
-				 	<agm-polyline-point [latitude]="point[1]" [longitude]="point[0]" *ngFor="let point of parsedCurrentTrack">
-				 	</agm-polyline-point>
-				 </agm-polyline>
-				 <agm-marker [latitude]="lat" [longitude]="lon" [label]="'S'"></agm-marker>
-				 <agm-marker [latitude]="parsedCurrentTrack[parsedCurrentTrack.length-1][1]" [longitude]="parsedCurrentTrack[parsedCurrentTrack.length-1][0]" [label]="'E'"></agm-marker>
-
+					<agm-polyline  strokeColor = "#ff8800">
+				 		<agm-polyline-point [latitude]="point[1]" [longitude]="point[0]" *ngFor="let point of parsedCurrentTrack">
+				 		</agm-polyline-point>
+				 	</agm-polyline>
+				<agm-marker [latitude]="lat" [longitude]="lon" [label]="'S'"></agm-marker>
+				<agm-marker [latitude]="parsedCurrentTrack[parsedCurrentTrack.length-1][1]" [longitude]="parsedCurrentTrack[parsedCurrentTrack.length-1][0]" [label]="'E'"></agm-marker>
 			</agm-map>
-  	</div>
+			
+  	</section>
 
 
 	`,
 	styles: [`
-  `]
+  `],
+  styleUrls: ['./app.component.css']
+
 	//providers: [ItemService]
 })
 
 
-export class TrackDetailComponent {
+
+export class TrackDetailComponent implements OnInit {
   title = 'Track Detail';
   @Input() item: Item[];
 	parsedCurrentTrack: Array<any>;
 	pointsCount: number;
   lat: number;
   lon: number;
-  zoom: number = 14;
+  zoom: number = 16;
   
   ngOnChanges() {
 	  this.parseData(this.item)
-
-    //console.log('Changed', changes.item.currentValue, changes.item.previousValue);
-
   }
   
   ngOnInit() {
@@ -79,31 +76,30 @@ export class TrackDetailComponent {
 		this.lat = parseFloat(this.parsedCurrentTrack[0][1])
 		this.lon = parseFloat(this.parsedCurrentTrack[0][0])
 		console.log('this.lat',this.lat)
-
 	}
 	
 	public unixTimeToString(unixTime) {
-		var dateObj = new Date(unixTime);
-		var year = dateObj.getUTCFullYear();
-		var month = dateObj.getUTCMonth() + 1;
-		var day = dateObj.getUTCDate();
+		let dateObj = new Date(unixTime);
+		let year = dateObj.getUTCFullYear();
+		let month = dateObj.getUTCMonth() + 1;
+		let day = dateObj.getUTCDate();
 		return day + '-' + month + '-' + year;
 	}
 	
 	//Haversine formula: http://www.movable-type.co.uk/scripts/latlong.html
 	distanceBetweenTwoPoints(point1, point2) {
-		var lon1 = point1[0], lat1 = point1[1],
+		let lon1 = point1[0], lat1 = point1[1],
 				lon2 = point2[0], lat2 = point2[1]
-		var R = 6371e3; // metres
-		var φ1 = this.toRadians(lat1);
-		var φ2 = this.toRadians(lat2);
-		var Δφ = this.toRadians(lat2-lat1);
+		let R = 6371e3; // earth radius in metres
+		let φ1 = this.toRadians(lat1);
+		let φ2 = this.toRadians(lat2);
+		let Δφ = this.toRadians(lat2-lat1);
 		var Δλ = this.toRadians(lon2-lon1);
 		
-		var a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+		let a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
 		        Math.cos(φ1) * Math.cos(φ2) *
 		        Math.sin(Δλ/2) * Math.sin(Δλ/2);
-		var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+		let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 		return  R * c;
 	}
 	
@@ -118,8 +114,13 @@ export class TrackDetailComponent {
 		}
 		return trackDistance.toFixed(1)
 	}
+	
+	public mapStyles = [{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.government","elementType":"labels.text.fill","stylers":[{"color":"#b43b3b"}]},{"featureType":"poi.park","elementType":"geometry.fill","stylers":[{"hue":"#ff0000"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road","elementType":"geometry.fill","stylers":[{"lightness":"8"},{"color":"#bcbec0"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#5b5b5b"}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#7cb3c9"},{"visibility":"on"}]},{"featureType":"water","elementType":"geometry.fill","stylers":[{"color":"#abb9c0"}]},{"featureType":"water","elementType":"labels.text","stylers":[{"color":"#fff1f1"},{"visibility":"off"}]}]
 		
+	
+	
 }
+
 
 
 
